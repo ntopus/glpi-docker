@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  nginx:
+    image: nginx:1.13
+    volumes:
+      - app:/var/www/html/glpi
+      - "./nginx/nginx.conf:/etc/nginx/nginx.conf"
+    ports:
+      - "80:80"
+    depends_on:
+      - php
+    networks: 
+      - int
+
+  php:
+    build:
+      context: ./php
+    networks: 
+      - int
+    volumes:
+      - app:/var/www/html/glpi
+
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: "glpi"
+      MYSQL_USER: "glpi"
+      MYSQL_PASSWORD: "V3ry1nS3cur3P4ssW0rd"
+      MYSQL_ROOT_PASSWORD: "V3ry1nS3cur34ls0"
+    ports:
+      - "3306:3306"
+    networks:
+      - int
+
+volumes:
+  app:
+
+networks:
+  int:
